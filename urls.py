@@ -12,6 +12,7 @@ urlpatterns = patterns(
     (r'^resources/$', 'zeus.views.resources'),
     (r'^auth/', include('heliosauth.urls')),
     (r'^helios/', include('helios.urls')),
+    (r'^upfile/', include('upfile.urls')),
 
     # SHOULD BE REPLACED BY APACHE STATIC PATH
     (r'booth/(?P<path>.*)$', 'django.views.static.serve', {'document_root' : settings.BOOTH_STATIC_PATH}),

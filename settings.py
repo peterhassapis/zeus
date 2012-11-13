@@ -96,6 +96,7 @@ INSTALLED_APPS = (
     'helios',
     'zeus',
     'server_ui',
+    'upfile',
 )
 
 
