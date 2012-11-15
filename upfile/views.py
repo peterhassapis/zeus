@@ -17,7 +17,10 @@ def upfile_view(request, filename=None):
         return HttpResponseNotAllowed(['HEAD', 'GET', 'POST'])
 
 def _get_range(content_range):
-    b, r = content_range.split()
+    if '=' in content_range:
+        b, r = content_range.split('=')
+    else:
+        b, r = content_range.split()
     if b != 'bytes':
         return HttpResponseBadRequest('invalid content range unit')
 
@@ -27,7 +30,7 @@ def _get_range(content_range):
     start, sep, end = r.partition('-')
     try:
         start = int(start)
-        end = int(end)
+        end = int(end) + 1 if end else None
     except ValueError:
         return HttpResponseBadRequest('invalid content range spec')
 
@@ -71,9 +74,12 @@ def post_upfile(request, filename=None):
 def get_upfile(request, filename=None, head=0):
     meta = request.META
     data = request.body
-    content_range = meta.get('HTTP_CONTENT_RANGE', None)
+    content_range = meta.get('HTTP_RANGE', None)
+    if content_range is None:
+        content_range = meta.get('HTTP_CONTENT_RANGE', None)
     if content_range is None:
         offset = 0
+        end = None
     else:
         r = _get_range(content_range)
         if isinstance(r, HttpResponse):
@@ -90,12 +96,12 @@ def get_upfile(request, filename=None, head=0):
         #return HttpResponse('Upfile not found', status=404)
 
     size = upfile.get_size()
-    if end > size:
+    if end is None or end > size:
         end = size
 
     response = HttpResponse()
     response.status_code = 200
-    response['Content-Range'] = 'bytes %d-%d/%d' % (offset, end, size)
+    response['Content-Range'] = 'bytes %d-%d/%d' % (offset, end-1, size)
     if not head:
         upfile.seek(offset)
         response.content = upfile.read(end - offset)

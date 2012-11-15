@@ -49,8 +49,8 @@ def download(url, fp, chunksize):
         end = offset + chunksize
         if end > upsize:
             end = upsize 
-        byterange = 'bytes %d-%d/*' % (offset, end)
-        conn.request('GET', conn.path, headers={'Content-Range': byterange})
+        byterange = 'bytes=%d-%d' % (offset, end - 1)
+        conn.request('GET', conn.path, headers={'Range': byterange})
         resp = conn.getresponse()
         data = resp.read()
         if resp.status != 200:
@@ -75,7 +75,7 @@ def upload(fp, url, chunksize):
         if end > localsize:
             end = localsize
         chunksize = end - offset
-        byterange = 'bytes %d-%d/*' % (offset, end)
+        byterange = 'bytes %d-%d/*' % (offset, end - 1)
         fp.seek(offset, 0)
         data = fp.read(chunksize)
         if len(data) != chunksize:
