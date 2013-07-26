@@ -29,6 +29,8 @@ urlpatterns += patterns(
 
     (r'static/auth/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.ROOT_PATH + '/heliosauth/media'}),
     (r'static/helios/(?P<path>.*)$', 'django.views.static.serve', {'document_root' : settings.ROOT_PATH + '/helios/media'}),
+    (r'static/documentation/(?P<path>.*)$', 'django.views.static.serve', {
+        'document_root' : settings.ROOT_PATH + '/docs'}),
     (r'static/(?P<path>.*)$', 'django.views.static.serve', {'document_root' : settings.ROOT_PATH + '/server_ui/media'}),
 
     (r'^', include('server_ui.urls')),
