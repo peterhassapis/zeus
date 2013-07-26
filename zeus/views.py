@@ -29,8 +29,11 @@ def faqs_voter(request):
                                                         'user': user})
 def resources(request):
   user = get_user(request)
-  return render_template(request, "zeus/resources", {'menu_active': 'resources',
-                                                     'user': user})
+  manuals_path = '/static/documentation/manuals/'
+  return render_template(request, "zeus/resources", {
+      'MANUALS_PATH': manuals_path,
+      'menu_active': 'resources',
+      'user': user})
 
 def stats(request):
     user = get_user(request)
