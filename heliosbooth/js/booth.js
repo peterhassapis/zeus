@@ -159,6 +159,9 @@ BOOTH.setup_election = function(raw_json) {
   _.each(BOOTH.election.questions_data, function(data, index){
     BOOTH.election.questions_data[index]['answers_index'] = answers_index;
     var prepend = 0;
+    if (BOOTH.election.election_type == "ecounting") {
+      return;
+    }
     if (BOOTH.election.election_type == "election") {
       prepend = 1;
     }
@@ -189,6 +192,7 @@ BOOTH.setup_election = function(raw_json) {
   $('#footer .content').processTemplate({'election' : BOOTH.election});
   BOOTH.setup_ballot();
 };
+
 
 BOOTH.show = function(el) {
   $('.booth-panel').hide();

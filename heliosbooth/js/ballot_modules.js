@@ -352,9 +352,93 @@ BM.ModuleBase,
 });
 
 
+BM.EcountingElection = function(election) {
+  this._init(election);
+}
+
+
+_.extend(BM.EcountingElection.prototype,
+BM.ModuleBase,
+{  
+  tpl: 'question_ecounting',
+  _init: function(election) {
+    this.election = election;
+    this.questions = this.election.questions[0];
+    this.el = {};
+    this.el.answer = $("#stv_answer");
+  },
+  
+  show: function() {
+    this.update_question();
+  },
+
+  handle_choice_click: function(e) {
+    e.preventDefault();
+    var el = $(e.target);
+    var answers = $("#question_stv_div input#stv_answer").val().split(",");
+    if (answers[0] == "") { answers = [] };
+    var index = el.parent().index();
+    var choice_to_remove = answers[index];
+    answer = _.without(answers, choice_to_remove).join(",");
+    $("#stv_answer").val(answer);
+    this.update_question(); 
+  },
+
+  handle_candidate_click: function(e) {
+    e.preventDefault();
+    var el = $(e.target);
+    if ($(this).hasClass('disabled')) {
+      return
+    }
+    var index = el.parent().index();
+    var answer = $("#stv_answer").val();
+    var append = "";
+    if (answer != "") { append = "," }
+    answer = answer + append + index;
+    $("#stv_answer").val(answer);
+    this.update_question();
+  },
+  
+  init_events: function() {
+    $("ul.stv-choices a.filled").live('click', _.bind(this.handle_choice_click, this));
+    $("ul.stv-candidates .stv-choice a.active").live('click', _.bind(this.handle_candidate_click, this));
+    if (this.post_init_events) { this.post_init_events() }
+  },
+
+  update_question: function() {
+      var answers = $("#question_stv_div input#stv_answer").val().split(",");
+      if (answers[0] == "") { answers = [] };
+
+      var choices = $(".stv-choices .stv-ballot-choice a");
+      var cands = $(".stv-candidates .stv-choice a");
+      
+      cands.removeClass("secondary").removeClass("disabled").addClass("active");
+      choices.find("span.value").text("Κενή");
+      choices.addClass("disabled").removeClass("success").addClass("secondary").removeClass("filled");
+
+      choices.find("a.filled").hide().text("");
+      _.each(answers, function(answer, index) {
+        var cand = $(".stv-candidates .choice-" + answer + " a");
+        cand.addClass("secondary").addClass("disabled").removeClass("active");
+        
+        var choice = $($(".stv-ballot-choice").get(index));
+        choice.find("span.value").text(cand.text());
+        choice.find("a").addClass("success").removeClass(
+          "disabled").removeClass("secondary").addClass("filled");
+      });
+      
+      try {
+        var max_choices = BOOTH.election.questions_data[0].max_answers;
+        if (choices.filter(".filled").length >= max_choices) {
+          cands.addClass("disabled").addClass("secondary");
+        }
+      } catch (err) {}
+    }
+});
+
+
 BM.registry = {
   election: BM.SimpleElection,
   election_parties: BM.PartiesElection,
-  //ecounting: BM.EcountingElection
+  ecounting: BM.EcountingElection
 }
-

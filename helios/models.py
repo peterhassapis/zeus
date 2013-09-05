@@ -348,6 +348,11 @@ class Election(HeliosModel):
       'answer_title': _(u'Υποψήφιος'),
       'questions_view': 'helios.views.one_election_candidates',
       'questions_empty_issue': _("Add candidates to the election"),
+      'max_limit_error': _("Too many choices"),
+      'min_limit_error': _("Too few choices"),
+      'auto_append_answer': False,
+      'count_empty_question': False,
+      'ranked': True
     }
   }
 
