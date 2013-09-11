@@ -39,6 +39,8 @@ Onoma epwnymo 4
 Onoma epwnymo 5
 """
 
+ELIGIBLES_COUNT_CHOICES = map(lambda r: (r+1,r+1), range(8))
+
 def add_test_voters(election):
     from helios.models import Voter
     import random
@@ -119,10 +121,10 @@ class ElectionForm(forms.Form):
 
   eligibles_count = forms.ChoiceField(label=_('Eligibles count'),
                                       help_text=_('Set the eligibles count of the election'),
-                                      choices = [('6','6'),('8','8')],
-                                      initial='6',
-                                      widget=forms.RadioSelect)
-  has_department_limit = forms.BooleanField(label=_('Has department limit'), required=False, initial=True,
+                                      choices = ELIGIBLES_COUNT_CHOICES,
+                                      initial='2')
+  has_department_limit = forms.BooleanField(label=_('Has department limit'),
+                                            required=False, initial=False,
                                             help_text=_('4009/2011 (A\' 195)'))
 
   help_email = forms.EmailField(label=_('Help email'), help_text=_('Voters can contact this email for election suport'))
